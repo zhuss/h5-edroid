@@ -7,27 +7,42 @@
 	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
 	<link rel="icon" type="image/x-icon" href="./img/favicon.ico">
 	<link rel="stylesheet" type="text/css" href="./css/base.css">
+	<link rel="stylesheet" href="./css/swiper.min.css">
 	<style type="text/css">
+		body{
+			background: #EEE;
+		}
 		.banner{
 			width: 100%;
 			height: 0;
-			padding-bottom: 56.25%;
+			padding-bottom: 40%;
 			position: relative;
 		}
-		.banner img{
+		.banner .banner-in{
 			position: absolute;
 			width:100%;
 			height: 100%;
-			object-fit: cover;
+			background: #000;
+
+		}
+		.swiper-container{
+			width: 100%;
+			height: 100%;
+		}
+		.banner-img{
+			display: block;
+			width:100%;
+			height: 100%;
+			object-fit:cover;
 		}
 		.list{
-			padding-top: 20px;
+			padding-top: 10px;
 		}
 		.list .item{
 			padding:10px;
 			background: #FFF;
 			display: flex;
-			margin-bottom: 1px;
+			margin-bottom: 10px;
 		}
 		.item .item-img{
 			width:72px;
@@ -126,7 +141,15 @@
 	<div id="app">
 		<!--banner-->
 		<div class="banner">
-			<img src="./img/banner.jpg"/>
+			<div class="banner-in">
+				<div class="swiper-container">
+				  <div class="swiper-wrapper">
+				    <div class="swiper-slide" v-for="item in banners" :key="item._id">
+				    	<img class="banner-img" :src="item.imgUrl" />
+				    </div>
+				  </div>
+				</div>
+			</div>
 		</div>
 		<!--banner-->
 		<!--list-->
@@ -137,13 +160,13 @@
 				</div>
 				<div class="item-info">
 					<div class="item-name">{{item.label}}</div>
-					<div class="item-size">{{item.vern}}/{{item.size}}/{{item.dlc}}</div>
+					<div class="item-size">{{item.vern}}/{{item.size}}/{{item.dl}}人下载</div>
 					<div class="item-star">
 					<span class="star">{{stars[item.star]}}</span><span class="unstar">{{stars[5-item.star]}}</span>
 					</div>
 				</div>
 				<div class="item-btn">
-					<a class="btn" href="javascript:;">下载</a>
+					<a class="btn" :href="item.url">下载</a>
 				</div>
 			</div>
 		</div>
@@ -154,25 +177,27 @@
 	</div>
 	<script type="text/javascript" src="./js/vue.min.js"></script>
 	<script type="text/javascript" src="./js/axios.min.js"></script>
+	<script src="./js/swiper.min.js"></script>
 	<script type="text/javascript">
 		var app = new Vue({
 		  el: '#app',
 		  data: {
 		  	stars:['','★','★★','★★★','★★★★','★★★★★'],
 		  	ajaxLoading:false,
-		  	page:0,
-		  	total:100,
-		    list:[]
+		  	page:1,
+		  	total:0,
+		    list:[],
+		    banners:[]
 		  },
 		  computed:{
 		  	loadingText(){
-		  		if(this.ajaxLoading){
+		  		if(this.list.length >= this.total-1){
+
+		  			return "我是底线";
+
+		  		}else if(this.ajaxLoading){
 
 		  			return "正在加载";
-
-		  		}else if(this.list.length >= this.total){
-
-		  			return "到底了";
 
 		  		}else{
 
@@ -182,6 +207,7 @@
 		  	}
 		  },
 		  mounted(){
+		  	this.getBanner();
 		  	this.getList();
 		  	//监听页面滚动
 		  	document.addEventListener('scroll',(eve)=>{
@@ -191,141 +217,35 @@
 		  		let bottom = bodyHeight-windowHeight-scrollTop;
 		  		//滚动到距离底部20px
 		  		if(bottom < 5 && !this.ajaxLoading && this.loadingText!='到底了'){
+		  			this.page++;
 		  			this.getList();
 		  		}
 		  	},false);
 		  },
 		  methods:{
-		  	getList(){
-		  		let list = [{
-				    	_id: 1,
-				    	gid: 1, 
-				    	pkg: "com.tencent.mm",
-				    	label: "微信",
-				    	vern: "5.3.12", 
-				    	iconUrl:"./img/256.png", 
-				    	url:"http://baidu.com", 
-				    	size: "25m", 
-				    	dlc: "15亿人下载",
-				    	star: 1
-				    },{
-				    	_id: 1,
-				    	gid: 1, 
-				    	pkg: "com.tencent.mm",
-				    	label: "微信",
-				    	vern: "5.3.12", 
-				    	iconUrl:"./img/256.png", 
-				    	url:"http://baidu.com", 
-				    	size: "25m", 
-				    	dlc: "15亿人下载",
-				    	star: 2
-				    },{
-				    	_id: 1,
-				    	gid: 1, 
-				    	pkg: "com.tencent.mm",
-				    	label: "微信",
-				    	vern: "5.3.12", 
-				    	iconUrl:"./img/256.png", 
-				    	url:"http://baidu.com", 
-				    	size: "25m", 
-				    	dlc: "15亿人下载",
-				    	star: 5
-				    },{
-				    	_id: 1,
-				    	gid: 1, 
-				    	pkg: "com.tencent.mm",
-				    	label: "微信",
-				    	vern: "5.3.12", 
-				    	iconUrl:"./img/256.png", 
-				    	url:"http://baidu.com", 
-				    	size: "25m", 
-				    	dlc: "15亿人下载",
-				    	star: 3
-				    },{
-				    	_id: 1,
-				    	gid: 1, 
-				    	pkg: "com.tencent.mm",
-				    	label: "微信",
-				    	vern: "5.3.12", 
-				    	iconUrl:"./img/256.png", 
-				    	url:"http://baidu.com", 
-				    	size: "25m", 
-				    	dlc: "15亿人下载",
-				    	star: 5
-				    },{
-				    	_id: 1,
-				    	gid: 1, 
-				    	pkg: "com.tencent.mm",
-				    	label: "微信",
-				    	vern: "5.3.12", 
-				    	iconUrl:"./img/256.png", 
-				    	url:"http://baidu.com", 
-				    	size: "25m", 
-				    	dlc: "15亿人下载",
-				    	star: 5
-				    },{
-				    	_id: 1,
-				    	gid: 1, 
-				    	pkg: "com.tencent.mm",
-				    	label: "微信",
-				    	vern: "5.3.12", 
-				    	iconUrl:"./img/256.png", 
-				    	url:"http://baidu.com", 
-				    	size: "25m", 
-				    	dlc: "15亿人下载",
-				    	star: 5
-				    },{
-				    	_id: 1,
-				    	gid: 1, 
-				    	pkg: "com.tencent.mm",
-				    	label: "微信",
-				    	vern: "5.3.12", 
-				    	iconUrl:"./img/256.png", 
-				    	url:"http://baidu.com", 
-				    	size: "25m", 
-				    	dlc: "15亿人下载",
-				    	star: 5
-				    },{
-				    	_id: 1,
-				    	gid: 1, 
-				    	pkg: "com.tencent.mm",
-				    	label: "微信",
-				    	vern: "5.3.12", 
-				    	iconUrl:"./img/256.png", 
-				    	url:"http://baidu.com", 
-				    	size: "25m", 
-				    	dlc: "15亿人下载",
-				    	star: 5
-				    },{
-				    	_id: 1,
-				    	gid: 1, 
-				    	pkg: "com.tencent.mm",
-				    	label: "微信",
-				    	vern: "5.3.12", 
-				    	iconUrl:"./img/256.png", 
-				    	url:"http://baidu.com", 
-				    	size: "25m", 
-				    	dlc: "15亿人下载",
-				    	star: 5
-				    },{
-				    	_id: 1,
-				    	gid: 1, 
-				    	pkg: "com.tencent.mm",
-				    	label: "微信",
-				    	vern: "5.3.12", 
-				    	iconUrl:"./img/256.png", 
-				    	url:"http://baidu.com", 
-				    	size: "25m", 
-				    	dlc: "15亿人下载",
-				    	star: 5
-				    }];
-				this.ajaxLoading = true;
-		  		axios.get('http://cnodejs.org/api/v1/topics')
-		  		.then((res) => {
-		  			this.ajaxLoading = false;
-		  			this.list = this.list.concat(list);
+		  	//获取banner
+		  	getBanner(){
+		  		axios.get('http://edroid.cn/app/view.php?action=banner').then((res) => {
+		  			this.banners = res.data;
+		  			setTimeout(()=>{
+		  				 var mySwiper = new Swiper ('.swiper-container', {
+		  				 	loop:true,
+		  				 	autoplay:4000
+						  })        
+					},100);
 		  		});
-		  		
+		  	},
+		  	//获取数据
+		  	getList(){
+				this.ajaxLoading = true;
+				let  start = (this.page-1)*10 + 1;
+		  		axios.get('http://edroid.cn/app/view.php?action=ls&start='+start+'&count=10')
+		  		.then((res) => {
+		  			console.log(res.data);
+		  			this.ajaxLoading = false;
+		  			this.total = res.data.total;
+		  			this.list = this.list.concat(res.data.rows);
+		  		});
 		  	}
 		  }
 		})
