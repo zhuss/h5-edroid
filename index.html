@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="vie">
+	<title>appStore</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+	<link rel="icon" type="image/x-icon" href="./img/favicon.ico">
+	<link rel="stylesheet" type="text/css" href="./css/base.css">
+	<style type="text/css">
+		.banner{
+			width: 100%;
+			height: 0;
+			padding-bottom: 56.25%;
+			position: relative;
+		}
+		.banner img{
+			position: absolute;
+			width:100%;
+			height: 100%;
+			object-fit: cover;
+		}
+		.list{
+			padding-top: 20px;
+		}
+		.list .item{
+			padding:10px;
+			background: #FFF;
+			display: flex;
+			margin-bottom: 1px;
+		}
+		.item .item-img{
+			width:72px;
+			height: 72px;
+			overflow: hidden;
+		}
+		.item-img img{
+			display: block;
+			width:100%;
+			height:100%;
+			object-fit: cover;
+		}
+
+		.item .item-info{
+			padding-left:10px;
+			padding-right: 10px;
+			flex: 1;
+			width: 10px;
+			height: 72px;
+		}
+
+		.item-info .item-name{
+			height: 24px;
+			line-height: 24px;
+			font-size: 18px;
+			font-weight: bolder;
+			color: #333;
+			text-overflow:ellipsis;
+			overflow:hidden;
+			white-space:nowrap;
+		}
+
+		.item-info .item-size{
+			margin-top: 5px;
+			height: 20px;
+			line-height: 20px;
+			font-size: 16px;
+			color: #8d8d8d;
+			text-overflow:ellipsis;
+			overflow:hidden;
+			white-space:nowrap;
+		}
+
+		.item-info .item-star{
+			height: 20px;
+			line-height: 20px;
+			font-size: 14px;
+			text-overflow:ellipsis;
+			overflow:hidden;
+			white-space:nowrap;
+		}
+
+		.item-star .star{
+			color: #ffc30c;
+		}
+
+		.item-star .unstar{
+			color: #CCC;
+		}
+
+		.item-btn{
+			padding:20px 0;
+		}
+
+		.item-btn .btn{
+			display: block;
+			width: 60px;
+			height: 32px;
+			background: #21b65c;
+			text-align: center;
+			line-height: 32px;
+			text-decoration: none;
+			font-size: 14px;
+			font-weight: bolder;
+			color: #FFF;
+		}
+
+		.loading{
+			position: fixed;
+			left: 50%;
+			margin-left: -50px;
+			bottom: 10px;
+			width:100px;
+			height: 30px;
+			border-radius: 30px;
+			text-align: center;
+			line-height: 30px;
+			font-size: 12px;
+			background:rgba(0,0,0,.8);
+			color: #EEE;
+		}
+
+	</style>
+</head>
+<body>
+	<div id="app">
+		<!--banner-->
+		<div class="banner">
+			<img src="./img/banner.jpg"/>
+		</div>
+		<!--banner-->
+		<!--list-->
+		<div class="list">
+			<div class="item" v-for="item in list" :key="item._id">
+				<div class="item-img">
+					<img :src="item.iconUrl"/>
+				</div>
+				<div class="item-info">
+					<div class="item-name">{{item.label}}</div>
+					<div class="item-size">{{item.vern}}/{{item.size}}/{{item.dlc}}</div>
+					<div class="item-star">
+					<span class="star">{{stars[item.star]}}</span><span class="unstar">{{stars[5-item.star]}}</span>
+					</div>
+				</div>
+				<div class="item-btn">
+					<a class="btn" href="javascript:;">下载</a>
+				</div>
+			</div>
+		</div>
+		<!--/list-->
+		<!--loading-->
+		<div class="loading">{{loadingText}}</div>
+		<!--/loading-->
+	</div>
+	<script type="text/javascript" src="./js/vue.min.js"></script>
+	<script type="text/javascript" src="./js/axios.min.js"></script>
+	<script type="text/javascript">
+		var app = new Vue({
+		  el: '#app',
+		  data: {
+		  	stars:['','★','★★','★★★','★★★★','★★★★★'],
+		  	ajaxLoading:false,
+		  	page:0,
+		  	total:100,
+		    list:[]
+		  },
+		  computed:{
+		  	loadingText(){
+		  		if(this.ajaxLoading){
+
+		  			return "正在加载";
+
+		  		}else if(this.list.length >= this.total){
+
+		  			return "到底了";
+
+		  		}else{
+
+		  			return "下拉加载"
+		  		}
+		  		
+		  	}
+		  },
+		  mounted(){
+		  	this.getList();
+		  	//监听页面滚动
+		  	document.addEventListener('scroll',(eve)=>{
+		  		let scrollTop = document.documentElement.scrollTop||document.body.scrollTop;
+		  		let windowHeight = document.documentElement.clientHeight;
+		  		let bodyHeight = document.body.scrollHeight;
+		  		let bottom = bodyHeight-windowHeight-scrollTop;
+		  		//滚动到距离底部20px
+		  		if(bottom < 5 && !this.ajaxLoading && this.loadingText!='到底了'){
+		  			this.getList();
+		  		}
+		  	},false);
+		  },
+		  methods:{
+		  	getList(){
+		  		let list = [{
+				    	_id: 1,
+				    	gid: 1, 
+				    	pkg: "com.tencent.mm",
+				    	label: "微信",
+				    	vern: "5.3.12", 
+				    	iconUrl:"./img/256.png", 
+				    	url:"http://baidu.com", 
+				    	size: "25m", 
+				    	dlc: "15亿人下载",
+				    	star: 1
+				    },{
+				    	_id: 1,
+				    	gid: 1, 
+				    	pkg: "com.tencent.mm",
+				    	label: "微信",
+				    	vern: "5.3.12", 
+				    	iconUrl:"./img/256.png", 
+				    	url:"http://baidu.com", 
+				    	size: "25m", 
+				    	dlc: "15亿人下载",
+				    	star: 2
+				    },{
+				    	_id: 1,
+				    	gid: 1, 
+				    	pkg: "com.tencent.mm",
+				    	label: "微信",
+				    	vern: "5.3.12", 
+				    	iconUrl:"./img/256.png", 
+				    	url:"http://baidu.com", 
+				    	size: "25m", 
+				    	dlc: "15亿人下载",
+				    	star: 5
+				    },{
+				    	_id: 1,
+				    	gid: 1, 
+				    	pkg: "com.tencent.mm",
+				    	label: "微信",
+				    	vern: "5.3.12", 
+				    	iconUrl:"./img/256.png", 
+				    	url:"http://baidu.com", 
+				    	size: "25m", 
+				    	dlc: "15亿人下载",
+				    	star: 3
+				    },{
+				    	_id: 1,
+				    	gid: 1, 
+				    	pkg: "com.tencent.mm",
+				    	label: "微信",
+				    	vern: "5.3.12", 
+				    	iconUrl:"./img/256.png", 
+				    	url:"http://baidu.com", 
+				    	size: "25m", 
+				    	dlc: "15亿人下载",
+				    	star: 5
+				    },{
+				    	_id: 1,
+				    	gid: 1, 
+				    	pkg: "com.tencent.mm",
+				    	label: "微信",
+				    	vern: "5.3.12", 
+				    	iconUrl:"./img/256.png", 
+				    	url:"http://baidu.com", 
+				    	size: "25m", 
+				    	dlc: "15亿人下载",
+				    	star: 5
+				    },{
+				    	_id: 1,
+				    	gid: 1, 
+				    	pkg: "com.tencent.mm",
+				    	label: "微信",
+				    	vern: "5.3.12", 
+				    	iconUrl:"./img/256.png", 
+				    	url:"http://baidu.com", 
+				    	size: "25m", 
+				    	dlc: "15亿人下载",
+				    	star: 5
+				    },{
+				    	_id: 1,
+				    	gid: 1, 
+				    	pkg: "com.tencent.mm",
+				    	label: "微信",
+				    	vern: "5.3.12", 
+				    	iconUrl:"./img/256.png", 
+				    	url:"http://baidu.com", 
+				    	size: "25m", 
+				    	dlc: "15亿人下载",
+				    	star: 5
+				    },{
+				    	_id: 1,
+				    	gid: 1, 
+				    	pkg: "com.tencent.mm",
+				    	label: "微信",
+				    	vern: "5.3.12", 
+				    	iconUrl:"./img/256.png", 
+				    	url:"http://baidu.com", 
+				    	size: "25m", 
+				    	dlc: "15亿人下载",
+				    	star: 5
+				    },{
+				    	_id: 1,
+				    	gid: 1, 
+				    	pkg: "com.tencent.mm",
+				    	label: "微信",
+				    	vern: "5.3.12", 
+				    	iconUrl:"./img/256.png", 
+				    	url:"http://baidu.com", 
+				    	size: "25m", 
+				    	dlc: "15亿人下载",
+				    	star: 5
+				    },{
+				    	_id: 1,
+				    	gid: 1, 
+				    	pkg: "com.tencent.mm",
+				    	label: "微信",
+				    	vern: "5.3.12", 
+				    	iconUrl:"./img/256.png", 
+				    	url:"http://baidu.com", 
+				    	size: "25m", 
+				    	dlc: "15亿人下载",
+				    	star: 5
+				    }];
+				this.ajaxLoading = true;
+		  		axios.get('http://cnodejs.org/api/v1/topics')
+		  		.then((res) => {
+		  			this.ajaxLoading = false;
+		  			this.list = this.list.concat(list);
+		  		});
+		  		
+		  	}
+		  }
+		})
+	</script>
+</body>
+</html>
