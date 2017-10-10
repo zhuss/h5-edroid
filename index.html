@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="vie">
-	<title>appStore</title>
+	<title>AppStore</title>
 	<meta name="keywords" content="安卓app市场,app下载,app推广,andriod">
 	<meta name="description" content="安卓app市场排行下载">
 	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
@@ -229,7 +229,7 @@
 		  methods:{
 		  	//获取banner
 		  	getBanner(){
-		  		axios.get('http://edroid.cn/app/view.php?action=banner').then((res) => {
+		  		axios.get('view.php?action=banner').then((res) => {
 		  			this.banners = res.data;
 		  			setTimeout(()=>{
 		  				 var mySwiper = new Swiper ('.swiper-container', {
@@ -243,7 +243,7 @@
 		  	getList(){
 				this.ajaxLoading = true;
 				let  start = (this.page-1)*10 + 1;
-		  		axios.get('http://edroid.cn/app/view.php?action=ls&start='+start+'&count=10')
+		  		axios.get('view.php?action=ls&start='+start+'&count=10')
 		  		.then((res) => {
 		  			console.log(res.data);
 		  			this.ajaxLoading = false;
@@ -252,7 +252,7 @@
 		  		});
 		  	},
 		  	itemClick(id){
-		  		location.href ="details?id="+id;
+		  		location.href ="details.html?id="+id;
 		  	}
 		  }
 		})

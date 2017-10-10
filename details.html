@@ -12,7 +12,7 @@
 	<link rel="stylesheet" href="./css/swiper.min.css">
 	<style type="text/css">
 		body{
-			background: #EEE;
+			background: #fff;
 		}
 		#app{
 			padding-bottom: 60px;
@@ -114,13 +114,21 @@
 			color: #333;
 			margin:5px 0;
 		}
-
 		.detail .star{
 			color: #ffc30c;
 		}
-
 		.detail .unstar{
 			color: #CCC;
+		}
+		.line {
+			margin-top: 10px;
+    		margin-bottom: 10px;
+			border-top: 1px #d8d9dd solid;
+		}
+		.icon-wrap {
+			background: #fff;
+		    border-bottom: 1px #d8d9dd solid;
+			padding-bottom: 10px;
 		}
 	</style>
 </head>
@@ -131,13 +139,16 @@
 			      		<path d="M26.403,3.341 L10.638,19.042 L26.249,34.613 C27.026,35.387 27.026,36.642 26.249,37.417 C25.473,38.191 24.214,38.191 23.437,37.417 L6.567,20.590 C5.930,19.954 5.825,18.997 6.234,18.245 C6.317,17.907 6.485,17.586 6.750,17.322 L23.595,0.544 C24.370,-0.228 25.627,-0.228 26.403,0.544 C27.178,1.316 27.178,2.569 26.403,3.341 Z"></path>
 			      <svg>
 			</a>
-			<div class="icon">
-				<img :src="details.iconUrl" />
+			<div class="icon-wrap">
+				<div class="icon">
+					<img :src="details.iconUrl" />
+				</div>
+				<div class="info">
+					<div class="info-name">{{details.label}}</div>
+					<div class="info-desc">{{details.desc}}</div>
+				</div>
 			</div>
-			<div class="info">
-				<div class="info-name">{{details.label}}</div>
-				<div class="info-desc">{{details.desc}}</div>
-			</div>
+			
 			<div class="scroll-warp">
 				<div class="imgs-warp">
 					<div class="imgs">
@@ -192,7 +203,7 @@
 	          },
 	          getDetails(){
 	          	let id = this.getUrlParams().id;
-	          	axios.get('http://edroid.cn/app/view.php?action=details&_id='+id)
+	          	axios.get('view.php?action=details&_id='+id)
 	          	.then((res) =>{
 	          		if(res.data){
 	          			this.details = res.data;
